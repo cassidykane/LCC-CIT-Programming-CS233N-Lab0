@@ -33,6 +33,7 @@ namespace TicTacToe
         const int COLUMN = 2;
         const int DIAGONAL = 3;
 
+        // the form still doesn't have labels to display these vars
         int computerWins = 0;
         int userWins = 0;
 
@@ -272,16 +273,13 @@ namespace TicTacToe
             switch (winningDimension)
             {
                 case ROW:
-                    HighlightRow(winningValue);
-                    resultLabel.Text = (player + " wins!");
+                    HighlightRow(winningValue);;
                     break;
                 case COLUMN:
                     HighlightColumn(winningValue);
-                    resultLabel.Text = (player + " wins!");
                     break;
                 case DIAGONAL:
                     HighlightDiagonal(winningValue);
-                    resultLabel.Text = (player + " wins!");
                     break;
             }
         }
@@ -318,12 +316,12 @@ namespace TicTacToe
             selectedLabel.Text = COMPUTER_SYMBOL.ToString();
             selectedLabel.Enabled = false;
 
-            int winningDimension, winningValue; // not sure abt what to do with the out vals here
+            int winningDimension, winningValue; 
             if (IsWinner(out winningDimension, out winningValue))
             {
                 MessageBox.Show("Computer wins");
                 computerWins++;
-                label10.Text = "User: " + userWins + " Computer: " + computerWins;
+                resultLabel.Text = "User: " + userWins + " Computer: " + computerWins;
             }
             else if (IsFull())
             {
@@ -375,13 +373,13 @@ namespace TicTacToe
             Label clickedLabel = (Label)sender;
 
             clickedLabel.Text = USER_SYMBOL.ToString();
-            clickedLabel.Enabled = false;
+            DisableSquare(clickedLabel);
             
             if (IsWinner(out winningDimension, out winningValue))
             {
                 MessageBox.Show("User wins");
                 userWins++;
-                label10.Text = "User: " + userWins + " Computer: " + computerWins;
+                resultLabel.Text = "User: " + userWins + " Computer: " + computerWins;
             }
             else if (IsFull())
             {
@@ -396,6 +394,8 @@ namespace TicTacToe
 
         private void newGameButton_Click(object sender, EventArgs e)
         {
+            ResetSquares();
+            resultLabel.Text = "";
         }
 
         private void exitButton_Click(object sender, EventArgs e)
