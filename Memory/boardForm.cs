@@ -68,7 +68,20 @@ namespace Memory
         // TODO:  students should write this one
         private bool IsMatch(int index1, int index2)
         {
-            return true;
+            string card1Val, card1Suit, card2Val, card2Suit;
+            card1Val = GetCardValue(index1);
+            card1Suit = GetCardSuit(index1);
+            card2Val = GetCardValue(index2);
+            card2Suit = GetCardSuit(index2);
+
+            if (card1Val == card2Val && card1Suit == card2Suit)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         // This method fills each picture box with a filename
@@ -91,6 +104,19 @@ namespace Memory
         // TODO:  students should write this one
         private void ShuffleCards()
         {
+            Random rand = new Random();
+            string[] values = { "a", "2", "j", "q", "k" };
+            string[] suits = { "c", "d", "h", "s" };
+            int i = 1;
+
+            for (int suit = 0; suit <= 3; suit++)
+            {
+                for (int value = 0; value <= 4; value++)
+                {
+                    SetCardFilename(i, "card" + values[rand.Next(values.Length)] + suits[rand.Next(suits.Length)] + ".jpg");
+                    i++;
+                }
+            }
         }
 
         // This method loads (shows) an image in a picture box.  Assumes that filenames
@@ -112,55 +138,112 @@ namespace Memory
         // shows (loads) the backs of all of the cards
         private void LoadAllCardBacks()
         {
-
+            int i = 1;
+            for (int suit = 0; suit <= 3; suit++)
+            {
+                for (int value = 0; value <= 4; value++)
+                {
+                    LoadCardBack(i);
+                    i++;
+                }
+            }
         }
 
         // Hides a picture box
         private void HideCard(int i)
         {
-
+            PictureBox card = GetCard(i);
+            card.Visible = false;
         }
 
         private void HideAllCards()
         {
+            int i = 1;
+            for (int suit = 0; suit <= 3; suit++)
+            {
+                for (int value = 0; value <= 4; value++)
+                {
+                    HideCard(i);
+                    i++;
+                }
+            }
 
         }
 
         // shows a picture box
         private void ShowCard(int i)
         {
-
+            PictureBox card = GetCard(i);
+            card.Visible = true;
         }
 
         private void ShowAllCards()
         {
-
+            int i = 1;
+            for (int suit = 0; suit <= 3; suit++)
+            {
+                for (int value = 0; value <= 4; value++)
+                {
+                    ShowCard(i);
+                    i++;
+                }
+            }
         }
 
         // disables a picture box
         private void DisableCard(int i)
         {
-
+            PictureBox card = GetCard(i);
+            card.Enabled = false;
         }
 
         private void DisableAllCards()
         {
-
+            int i = 1;
+            for (int suit = 0; suit <= 3; suit++)
+            {
+                for (int value = 0; value <= 4; value++)
+                {
+                    DisableCard(i);
+                    i++;
+                }
+            }
         }
 
         private void EnableCard(int i)
         {
-
+            PictureBox card = GetCard(i);
+            card.Enabled = true;
         }
 
         private void EnableAllCards()
         {
-
+            int i = 1;
+            for (int suit = 0; suit <= 3; suit++)
+            {
+                for (int value = 0; value <= 4; value++)
+                {
+                    EnableCard(i);
+                    i++;
+                }
+            }
         }
-    
+
         private void EnableAllVisibleCards()
         {
-
+            int i = 1;
+            for (int suit = 0; suit <= 3; suit++)
+            {
+                for (int value = 0; value <= 4; value++)
+                {
+                    PictureBox card = GetCard(i);
+                    if (card.Visible == true)
+                    {
+                        EnableCard(i);
+                    }
+                    i++;
+                }
+            }
         }
 
         #endregion
@@ -176,13 +259,30 @@ namespace Memory
              *      to make sure that the cards are loaded successfully and that
              *      they're shuffled.  If you get all 2s, something is wrong.
             */
+
+            FillCardFilenames();
+            ShuffleCards();
+            LoadAllCardBacks();
+
         }
 
         private void card_Click(object sender, EventArgs e)
         {
             PictureBox card = (PictureBox)sender;
             int cardNumber = int.Parse(card.Name.Substring(4));
-
+            if (firstCardNumber == NOT_PICKED_YET)
+            {
+                firstCardNumber = cardNumber;
+                LoadCard(cardNumber);
+                DisableCard(cardNumber);
+            }
+            else
+            {
+                secondCardNumber = cardNumber;
+                LoadCard(cardNumber);
+                DisableAllCards();
+                flipTimer.Start();
+            }
             /* 
              * if the first card isn't picked yet
              *      save the first card index
@@ -199,6 +299,31 @@ namespace Memory
 
         private void flipTimer_Tick(object sender, EventArgs e)
         {
+            flipTimer.Stop();
+            if (IsMatch(firstCardNumber, secondCardNumber))
+            {
+                matches++;
+                HideCard(firstCardNumber);
+                HideCard(secondCardNumber);
+                firstCardNumber = NOT_PICKED_YET;
+                secondCardNumber = NOT_PICKED_YET;
+                if (matches == 10) 
+                {
+                    MessageBox.Show("You win!");
+                }
+                else
+                {
+                    EnableAllCards();
+                }
+            }
+            else
+            {
+                LoadCardBack(firstCardNumber);
+                LoadCardBack(secondCardNumber);
+                firstCardNumber = NOT_PICKED_YET;
+                secondCardNumber = NOT_PICKED_YET;
+                EnableAllCards();
+            }
             /*
              * stop the flip timer
              * if the first card and second card are a match

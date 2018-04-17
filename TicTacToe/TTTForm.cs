@@ -33,7 +33,6 @@ namespace TicTacToe
         const int COLUMN = 2;
         const int DIAGONAL = 3;
 
-        // the form still doesn't have labels to display these vars
         int computerWins = 0;
         int userWins = 0;
 
@@ -293,10 +292,10 @@ namespace TicTacToe
                 {
                     Label square = GetSquare(row, col);
                     square.Text = "";
-                    square.Enabled = true;
                     square.ForeColor = Color.Black;
                 }
             }
+            EnableAllSquares();
         }
 
         private void MakeComputerMove()
@@ -307,14 +306,14 @@ namespace TicTacToe
 
             do
             {
-                row = randomNumberGenerator.Next(0, 3);
-                col = randomNumberGenerator.Next(0, 3);
+                row = randomNumberGenerator.Next(0, 5);
+                col = randomNumberGenerator.Next(0, 5);
                 selectedLabel = GetSquare(row, col);
             }
             while (selectedLabel.Text != "");
 
             selectedLabel.Text = COMPUTER_SYMBOL.ToString();
-            selectedLabel.Enabled = false;
+            DisableSquare(selectedLabel);
 
             int winningDimension, winningValue; 
             if (IsWinner(out winningDimension, out winningValue))
@@ -322,10 +321,12 @@ namespace TicTacToe
                 MessageBox.Show("Computer wins");
                 computerWins++;
                 resultLabel.Text = "User: " + userWins + " Computer: " + computerWins;
+                DisableAllSquares();
             }
             else if (IsFull())
             {
                 MessageBox.Show("It's a draw");
+                DisableAllSquares();
             }
         }
 
@@ -380,10 +381,12 @@ namespace TicTacToe
                 MessageBox.Show("User wins");
                 userWins++;
                 resultLabel.Text = "User: " + userWins + " Computer: " + computerWins;
+                DisableAllSquares();
             }
             else if (IsFull())
             {
                 MessageBox.Show("It's a draw");
+                DisableAllSquares();
             }
             else
             {
@@ -395,11 +398,11 @@ namespace TicTacToe
         private void newGameButton_Click(object sender, EventArgs e)
         {
             ResetSquares();
-            resultLabel.Text = "";
         }
 
         private void exitButton_Click(object sender, EventArgs e)
         {
+            this.Close();
         }
     }
 }
